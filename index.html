@@ -1,62 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>MindAR.js Image Tracking Example</title>
-    <!-- Include Three.js (MindAR.js uses Three.js under the hood) -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r121/three.min.js"></script>
-    <!-- Include MindAR.js (production build) -->
-    <script src="https://unpkg.com/mind-ar@1.1.4/dist/mindar-image-three.prod.js"></script>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-      }
-      #mindar-container {
-        width: 100vw;
-        height: 100vh;
-      }
-    </style>
-  </head>
-  <body>
-    <!-- Container for the AR view -->
-    <div id="mindar-container"></div>
-    <script type="module">
-      // Import MindAR namespace (if using module system, otherwise use global "MINDAR")
-      // Create the MindAR three.js setup:
-      const mindarThree = new window.MINDAR.IMAGE.MindARThree({
-        container: document.querySelector("#mindar-container"),
-        imageTargetSrc: "./assets/targets.mind", // Your generated MindAR target file
-      });
-      const { renderer, scene, camera } = mindarThree;
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>MindAR Image Demo</title>
+    <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<body>
+    <a-scene mindar-image="imageTargetSrc: ./assets/targets.mind;
+    filterMinCF: 0.01;
+    filterBeta: 0.001;
+    missTolerance: 0;
+    warmupTolerance: 0;"
+     color-space="sRGB" embedded renderer="colorManagement: true, physicallyCorrectLights">
+        <a-assets>
+            <img id="target-image" src="./assets/target-image.png">
+            <img id="overlay" src="./assets/overlay-image.jpg">
+        </a-assets>
 
-      // Create a textured plane that will appear on the target:
-      const geometry = new THREE.PlaneGeometry(1.5, 2); // adjust dimensions as needed
-      const texture = new THREE.TextureLoader().load("./assets/display-image.png"); // Replace with your display image URL/path
-      const material = new THREE.MeshBasicMaterial({ map: texture, transparent: true });
-      const plane = new THREE.Mesh(geometry, material);
-      // Optionally adjust plane position (e.g., lift it slightly above the marker)
-      plane.position.set(0, 0.5, 0);
+        <!-- Image Target -->
+        <a-camera position="0 0 0" look-controls-enabled="false"></a-camera>
 
-      // Add an anchor for the target (assuming your target index is 0)
-      const anchor = mindarThree.addAnchor(0);
-      anchor.group.add(plane);
+        <!-- Target Entity -->
+        <a-entity mindar-image-target="targetIndex: 0"></a-entity>
 
-      // Start the AR experience
-      (async () => {
-        await mindarThree.start();
-        renderer.setAnimationLoop(() => {
-          renderer.render(scene, camera);
-        });
-      })();
+        <!-- Overlay Content -->
+        <a-entity id="overlay-entity" visible="false" position="0 0 0.1">
+            <a-plane src="#overlay" width="1" height="1"></a-plane>
+        </a-entity>
+    </a-scene>
 
-      // For debugging: log when the target is found/lost
-      anchor.onTargetFound = () => {
-        console.log("Target detected");
-      };
-      anchor.onTargetLost = () => {
-        console.log("Target lost");
-      };
-    </script>
-  </body>
+    <script src="./app.js"></script>
+</body>
 </html>
