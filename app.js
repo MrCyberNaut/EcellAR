@@ -33,17 +33,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const overlayEntity = document.querySelector('#overlay-entity');
+    const overlayVideo = document.querySelector('#overlay-video');
+
+
+
+    overlayVideo.play().catch(() => {
+        console.log('Autoplay blocked. User interaction required.');
+    });
+    overlayVideo.addEventListener('loadeddata', () => {
+        console.log('Video loaded successfully');
+    });
+    
+    overlayVideo.addEventListener('error', (e) => {
+        console.error('Error loading video:', e);
+    }); 
+    
     
     scene.addEventListener('targetFound', (event) => {
         console.log('target found');
         statusDisplay.innerHTML = 'Target found!';
         overlayEntity.setAttribute('visible', true);
+        overlayVideo.play().then(() => {
+            console.log('Video started playing');
+        }).catch((error) => {
+            console.error('Video play failed:', error);
+        });
+    
+        console.log('Overlay entity visibility:', overlayEntity.getAttribute('visible'));
     });
+    
 
     scene.addEventListener('targetLost', (event) => {
         console.log('target lost');
         statusDisplay.innerHTML = 'Target lost. Scanning...';
         overlayEntity.setAttribute('visible', false);
+        overlayVideo.pause();
     });
 
     // Make camera full screen
@@ -51,4 +75,12 @@ document.addEventListener('DOMContentLoaded', () => {
     camera.setAttribute('position', '0 0 0');
     camera.setAttribute('look-controls-enabled', 'false');
     camera.setAttribute('camera', 'active: true');
+
+    // Check if the video asset is loaded
+    overlayVideo.addEventListener('loadeddata', () => {
+        console.log('Overlay video loaded successfully');
+    });
+    overlayVideo.addEventListener('error', () => {
+        console.error('Failed to load overlay video');
+    });
 });
