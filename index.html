@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <script src="https://aframe.io/releases/1.0.4/aframe.min.js"></script>
+    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
+    <style>
+      body {
+        margin: 0;
+        overflow: hidden;
+        font-family: Arial, sans-serif;
+      }
+      #loadingMessage {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 10px 20px;
+        border-radius: 4px;
+      }
+      #infoMessage {
+        position: absolute;
+        top: 10px;
+        left: 10px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+      }
+      #downloadLink {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        background: rgba(0, 0, 0, 0.5);
+        color: white;
+        padding: 5px 10px;
+        border-radius: 4px;
+      }
+    </style>
+  </head>
+  <body>
+    <div id="loadingMessage">Loading, please wait...</div>
+    <div id="infoMessage">AR.js is initializing...</div>
+    <div id="downloadLink">
+      <a
+        href="https://cdn.glitch.global/5f488ea9-43da-4fcf-8636-0e4bea1f03ee/all%20speakers.iset?v=1738172923119"
+        download="marker.png"
+        >Download Marker</a
+      >
+    </div>
+
+    <a-scene
+      vr-mode-ui="enabled: false;"
+      loading-screen="enabled: false;"
+      renderer="logarithmicDepthBuffer: true;"
+      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
+      embedded
+    >
+      <a-assets>
+        <img
+          id="display-image"
+          src="https://cdn.glitch.global/5f488ea9-43da-4fcf-8636-0e4bea1f03ee/velumani.png?v=1738173919845"
+          crossorigin="anonymous"
+        />
+      </a-assets>
+
+      <a-nft
+        id="nft-marker"
+        type="nft"
+        url="https://cdn.glitch.global/5f488ea9-43da-4fcf-8636-0e4bea1f03ee/all_speakers"
+        smooth="true"
+       
+      >
+        <!-- Corrected plane element -->
+        <a-plane
+          material="src: #display-image;"
+          position="0 0 0"
+          rotation="-90 0 0"
+          width="2"
+          height="2"
+        ></a-plane>
+      </a-nft>
+
+      <a-entity camera></a-entity>
+    </a-scene>
+
+    <script>
+      const scene = document.querySelector("a-scene");
+      const infoMessage = document.getElementById("infoMessage");
+      const loadingMessage = document.getElementById("loadingMessage");
+
+      function showInfo(message) {
+        infoMessage.textContent = message;
+      }
+
+      function showLoading(show) {
+        loadingMessage.style.display = show ? "block" : "none";
+      }
+
+      scene.addEventListener("loaded", () => {
+        showLoading(false);
+        showInfo("Scene loaded - Scan the marker");
+
+        const nftMarker = document.getElementById("nft-marker");
+        if (nftMarker) {
+          nftMarker.addEventListener("markerFound", () =>
+            showInfo("Marker detected")
+          );
+          nftMarker.addEventListener("markerLost", () =>
+            showInfo("Marker lost")
+          );
+        } else {
+          showInfo("NFT Marker element not found");
+        }
+      });
+
+      window.addEventListener("error", (e) => {
+        showInfo(`Error: ${e.message || "Unknown error"}`);
+        console.error(e);
+      });
+
+      // Handle AR.js specific errors
+      scene.addEventListener("arjs-nft-loaded", (e) => {
+        console.log("NFT marker loaded", e.detail);
+      });
+
+      scene.addEventListener("arjs-video-loaded", (e) => {
+        console.log("Video device loaded", e.detail);
+      });
+    </script>
+  </body>
+</html>
