@@ -1,124 +1,41 @@
 <!DOCTYPE html>
-<html lang="en">
-  <head>
-    <meta charset="UTF-8" />
-    <title>AR.js NFT Image Tracking</title>
-    <!-- Import A-Frame -->
-    <script src="https://cdn.jsdelivr.net/npm/aframe@1.6.0/dist/aframe-master.min.js">
-      
-    </script>
-    <!-- Import AR.js NFT version -->
-    <script src="https://raw.githack.com/AR-js-org/AR.js/master/aframe/build/aframe-ar-nft.js"></script>
-    <style>
-      body {
-        margin: 0;
-        overflow: hidden;
-        font-family: Arial, sans-serif;
-      }
-      #loadingMessage {
-        position: absolute;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 10px 20px;
-        border-radius: 4px;
-      }
-      #infoMessage {
-        position: absolute;
-        top: 10px;
-        left: 10px;
-        background: rgba(0, 0, 0, 0.5);
-        color: white;
-        padding: 5px 10px;
-        border-radius: 4px;
-      }
-    </style>
-  </head>
-  <body>
-    <div id="loadingMessage">Loading, please wait...</div>
-    <div id="infoMessage">AR.js is initializing...</div>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>MindAR Video Demo</title>
+  <style>
+    html, body, a-scene {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-aframe.prod.js"></script>
+</head>
+<body>
+  <a-scene 
+      mindar-image="imageTargetSrc: ./assets/targets.mind;
+      filterMinCF: 0.01;
+      filterBeta: 0.001;
+      missTolerance: 0;
+      warmupTolerance: 0;"
+      color-space="sRGB" embedded renderer="colorManagement: true, physicallyCorrectLights">
+    <a-assets>
+      <img id="target-image" src="./assets/target-image.png">
+      <video id="overlay-video" src="./assets/overlay-video.mp4" autoplay loop muted playsinline crossorigin="anonymous"></video>
+    </a-assets>
 
-    <a-scene
-      vr-mode-ui="enabled: false;"
-      loading-screen="enabled: false;"
-      renderer="logarithmicDepthBuffer: true;"
-      arjs="trackingMethod: best; sourceType: webcam; debugUIEnabled: false;"
-      embedded
-    >
-      <a-assets>
-        <img
-          id="display-image"
-          src="https://cdn.glitch.global/7ea9ad8f-24fd-49e9-9eaf-47e2cbf1d484/a78a090a-246b-44c0-909e-d92ce563f65c.image.png?v=1738169724953"
-          crossorigin="anonymous"
-        />
-      </a-assets>
+    <!-- Camera -->
+    <a-camera position="0 0 0" look-controls-enabled="false"></a-camera>
 
-      <!-- Ensure that the "url" points to your valid NFT descriptor folder -->
-      <a-nft
-        id="nft-marker"
-        type="nft"
-        url="assets/all_speakers"
-        smooth="true"
-      >
-        <!-- Adjusted plane: rotated -90 to lay flat -->
-        <a-plane
-          material="src: #display-image; transparent: true;"
-          position="0 0.1 0"
-          rotation="-90 0 0"
-          width="1.5"
-          height="2"
-        ></a-plane>
-      </a-nft>
+    <!-- Overlay Content -->
+    <a-entity id="overlay-entity" mindar-image-target="targetIndex: 0">
+      <a-plane src="#overlay-video" width="2" height="2" position="0 0 -1"></a-plane>
+    </a-entity>
+  </a-scene>
 
-      <a-entity camera></a-entity>
-    </a-scene>
-
-    <script>
-      const scene = document.querySelector("a-scene");
-      const infoMessage = document.getElementById("infoMessage");
-      const loadingMessage = document.getElementById("loadingMessage");
-
-      function showInfo(message) {
-        infoMessage.textContent = message;
-        console.log(message);
-      }
-
-      function showLoading(show) {
-        loadingMessage.style.display = show ? "block" : "none";
-      }
-
-      scene.addEventListener("loaded", () => {
-        showLoading(false);
-        showInfo("Scene loaded - Scan the marker");
-
-        const nftMarker = document.getElementById("nft-marker");
-        if (nftMarker) {
-          nftMarker.addEventListener("markerFound", () => {
-            showInfo("Marker detected");
-          });
-          nftMarker.addEventListener("markerLost", () => {
-            showInfo("Marker lost");
-          });
-        } else {
-          showInfo("NFT Marker element not found");
-        }
-      });
-
-      window.addEventListener("error", (e) => {
-        showInfo("Error: " + (e.message || "Unknown error"));
-        console.error(e);
-      });
-
-      // AR.js-specific events for debugging
-      scene.addEventListener("arjs-nft-loaded", (e) => {
-        console.log("NFT marker loaded", e.detail);
-      });
-
-      scene.addEventListener("arjs-video-loaded", (e) => {
-        console.log("Video device loaded", e.detail);
-      });
-    </script>
-  </body>
+  <script src="./app.js"></script>
+</body>
 </html>
