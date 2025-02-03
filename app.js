@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
     const scene = document.querySelector('a-scene');
-    
+  
     // Create status display
     const statusDisplay = document.createElement('div');
     statusDisplay.style.position = 'absolute';
@@ -11,76 +11,66 @@ document.addEventListener('DOMContentLoaded', () => {
     statusDisplay.style.padding = '10px';
     statusDisplay.style.zIndex = '1000';
     document.body.appendChild(statusDisplay);
-
-    scene.addEventListener('arReady', (event) => {
-        console.log('MindAR is ready');
-        statusDisplay.innerHTML = 'MindAR is ready';
+  
+    scene.addEventListener('arReady', () => {
+      console.log('MindAR is ready');
+      statusDisplay.innerHTML = 'MindAR is ready';
     });
-
-    scene.addEventListener('arError', (event) => {
-        console.log('MindAR failed to start');
-        statusDisplay.innerHTML = 'MindAR failed to start';
+  
+    scene.addEventListener('arError', () => {
+      console.log('MindAR failed to start');
+      statusDisplay.innerHTML = 'MindAR failed to start';
     });
-
+  
     const startButton = document.createElement('button');
     startButton.innerHTML = 'Start AR';
     document.body.appendChild(startButton);
-    
+  
     startButton.addEventListener('click', async () => {
-        await scene.systems["mindar-image"].start();
-        startButton.style.display = 'none';
-        statusDisplay.innerHTML = 'Scanning for targets...';
+      await scene.systems["mindar-image"].start();
+      startButton.style.display = 'none';
+      statusDisplay.innerHTML = 'Scanning for targets...';
     });
-
+  
     const overlayEntity = document.querySelector('#overlay-entity');
     const overlayVideo = document.querySelector('#overlay-video');
-
-
-
+  
+    // Attempt to play video on load (user interaction may be required)
     overlayVideo.play().catch(() => {
-        console.log('Autoplay blocked. User interaction required.');
+      console.log('Autoplay blocked. User interaction required.');
     });
+  
     overlayVideo.addEventListener('loadeddata', () => {
-        console.log('Video loaded successfully');
+      console.log('Overlay video loaded successfully');
     });
-    
+  
     overlayVideo.addEventListener('error', (e) => {
-        console.error('Error loading video:', e);
-    }); 
-    
-    
-    scene.addEventListener('targetFound', (event) => {
-        console.log('target found');
-        statusDisplay.innerHTML = 'Target found!';
-        overlayEntity.setAttribute('visible', true);
-        overlayVideo.play().then(() => {
-            console.log('Video started playing');
-        }).catch((error) => {
-            console.error('Video play failed:', error);
-        });
-    
-        console.log('Overlay entity visibility:', overlayEntity.getAttribute('visible'));
+      console.error('Error loading video:', e);
     });
-    
-
-    scene.addEventListener('targetLost', (event) => {
-        console.log('target lost');
-        statusDisplay.innerHTML = 'Target lost. Scanning...';
-        overlayEntity.setAttribute('visible', false);
-        overlayVideo.pause();
+  
+    scene.addEventListener('targetFound', () => {
+      console.log('Target found');
+      statusDisplay.innerHTML = 'Target found!';
+      overlayEntity.setAttribute('visible', true);
+  
+      // Ensure video is playing and texture is updated
+      overlayVideo.play();
+      if (overlayEntity.components.material) {
+        overlayEntity.components.material.material.map.needsUpdate = true;
+      }
     });
-
-    // Make camera full screen
+  
+    scene.addEventListener('targetLost', () => {
+      console.log('Target lost');
+      statusDisplay.innerHTML = 'Target lost. Scanning...';
+      overlayEntity.setAttribute('visible', false);
+      overlayVideo.pause();
+    });
+  
+    // Camera adjustments (if needed)
     const camera = document.querySelector('a-camera');
     camera.setAttribute('position', '0 0 0');
     camera.setAttribute('look-controls-enabled', 'false');
     camera.setAttribute('camera', 'active: true');
-
-    // Check if the video asset is loaded
-    overlayVideo.addEventListener('loadeddata', () => {
-        console.log('Overlay video loaded successfully');
-    });
-    overlayVideo.addEventListener('error', () => {
-        console.error('Failed to load overlay video');
-    });
-});
+  });
+  

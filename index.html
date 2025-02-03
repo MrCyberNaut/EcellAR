@@ -1,47 +1,41 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <meta charset="utf-8">
-    <title>MindAR Video Demo</title>
-    <style>
-        html, body, a-scene {
-            width: 100%;
-            height: 100%;
-            margin: 0;
-            overflow: hidden;
-        }
-    </style>
-    <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-aframe.prod.js"></script>
+  <meta charset="utf-8">
+  <title>MindAR Video Demo</title>
+  <style>
+    html, body, a-scene {
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      overflow: hidden;
+    }
+  </style>
+  <script src="https://cdn.jsdelivr.net/npm/aframe@1.2.0/dist/aframe.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.0/dist/mindar-image-aframe.prod.js"></script>
 </head>
 <body>
-    <a-scene mindar-image="imageTargetSrc: ./assets/targets.mind;
-    filterMinCF: 0.01;
-    filterBeta: 0.001;
-    missTolerance: 0;
-    warmupTolerance: 0;"
-     color-space="sRGB" embedded renderer="colorManagement: true, physicallyCorrectLights">
-        <a-assets>
-            <img id="target-image" src="./assets/target-image.png">
-            <video id="overlay-video" src="./assets/overlay-video.mp4" autoplay loop="true" muted playsinline crossorigin="anonymous"></video>
+  <a-scene 
+      mindar-image="imageTargetSrc: ./assets/targets.mind;
+      filterMinCF: 0.01;
+      filterBeta: 0.001;
+      missTolerance: 0;
+      warmupTolerance: 0;"
+      color-space="sRGB" embedded renderer="colorManagement: true, physicallyCorrectLights">
+    <a-assets>
+      <img id="target-image" src="./assets/target-image.png">
+      <video id="overlay-video" src="./assets/overlay-video.mp4" autoplay loop muted playsinline crossorigin="anonymous"></video>
+    </a-assets>
 
+    <!-- Camera -->
+    <a-camera position="0 0 0" look-controls-enabled="false"></a-camera>
 
-        </a-assets>
+    <!-- Overlay Content -->
+    <a-entity id="overlay-entity" mindar-image-target="targetIndex: 0">
+      <a-plane src="#overlay-video" width="2" height="2" position="0 0 -1"></a-plane>
+    </a-entity>
+  </a-scene>
 
-        <!-- Image Target -->
-        <a-camera position="0 0 0" look-controls-enabled="false"></a-camera>
-
-        <!-- Target Entity -->
-        <a-entity mindar-image-target="targetIndex: 0"></a-entity>
-
-        <!-- Overlay Content -->
-        <a-entity mindar-image-target="targetIndex: 0">
-            <a-plane src="#overlay-video" width="2" height="2" position="0 0 -1"></a-plane>
-
-        </a-entity>
-        
-    </a-scene>
-
-    <script src="./app.js"></script>
+  <script src="./app.js"></script>
 </body>
 </html>
