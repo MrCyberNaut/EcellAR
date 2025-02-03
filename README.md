@@ -32,8 +32,8 @@ This project is a simple AR experience demo using [MindAR](https://hiukim.github
    git clone https://github.com/yourusername/mindar-video-demo.git
    cd mindar-video-demo
 
-#usage
-Usage
+
+[Usage]
 Running on Desktop
 Start the Local Server:
 Follow the installation instructions above and run your server.
@@ -72,3 +72,28 @@ Start the AR Experience:
 Tap the "Start AR" button to initialize the AR experience.
 Hold your phone steady and point it at the target image.
 Once detected, the video overlay will appear on the target.
+
+
+[Troubleshooting]
+Camera Access Issues:
+Ensure that your browser has permission to access the camera. Running on HTTPS or localhost is recommended.
+
+Asset Loading Errors:
+Check the browser console for any asset loading errors. Make sure all file paths are correct.
+
+Target Not Detected:
+Verify that the target image and targets.mind file are correctly configured. Make sure the lighting conditions are adequate.
+
+
+---
+[License]
+### How to Use
+
+1. **Clone and Set Up:** Follow the instructions above to clone the repository and set up the local server.
+2. **Testing on Your Phone:**  
+   - Connect your phone to the same network.
+   - Access the demo via your phone’s browser using your computer's local IP.
+   - Tap the "Start AR" button and point your camera at the target image.
+
+Feel free to adjust or extend this README based on your project needs or any additional setup instructions.
+
