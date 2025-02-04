@@ -16,15 +16,14 @@
 </head>
 <body>
   <a-scene 
-      mindar-image="imageTargetSrc: ./assets/targets.mind;
-      filterMinCF: 0.01;
-      filterBeta: 0.001;
-      missTolerance: 0;
-      warmupTolerance: 0;"
-      color-space="sRGB" embedded renderer="colorManagement: true, physicallyCorrectLights">
+  mindar-image="imageTargetSrc: ./assets/targets.mind;
+  filterMinCF: 0.01;
+  filterBeta: 0.001;"
+color-space="sRGB" embedded
+renderer="colorManagement: true, physicallyCorrectLights">
     <a-assets>
       <img id="target-image" src="./assets/target-image.png">
-      <video id="overlay-video" src="./assets/overlay-video.mp4" autoplay loop muted playsinline crossorigin="anonymous"></video>
+      <video id="overlay-video" src="./assets/overlay-video-2.mp4" autoplay loop muted playsinline crossorigin="anonymous"></video>
     </a-assets>
 
     <!-- Camera -->
@@ -32,7 +31,8 @@
 
     <!-- Overlay Content -->
     <a-entity id="overlay-entity" mindar-image-target="targetIndex: 0">
-      <a-plane src="#overlay-video" width="2" height="2" position="0 0 -1"></a-plane>
+      <a-plane src="#overlay-video" width="1.2" height="1.77" position="0 0 0"></a-plane>
+
     </a-entity>
   </a-scene>
 
